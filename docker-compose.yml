@@ -1,0 +1,10 @@
+version: "3"
+services:
+  postgres:
+    image: postgres
+    container_name: ""
+    hostname: ""
+    restart: ""
+    environment: {}
+    volumes: []
+    ports: []

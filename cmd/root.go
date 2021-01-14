@@ -18,10 +18,10 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/spf13/cobra"
 
-	"github.com/openopsdev/go-cli-commons/templater"
 	"github.com/spf13/viper"
 )
 
@@ -39,23 +39,9 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) {
-		fm := templater.NewFile("./templates/.stitch.hbs")
-		ctx := map[string]string {
-			"version": "3",
-		}
-		err := fm.Render(ctx)
+	// Run: func(cmd *cobra.Command, args []string) {
 
-		if err != nil {
-			os.Exit(1)
-		}
-
-		err = fm.Save("./.stitch")
-
-		if err != nil {
-			os.Exit(1)
-		}
-	 },
+	//  },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -95,8 +81,8 @@ func initConfig() {
 		}
 
 		// Search config in home directory with name ".stitch" (without extension).
-		viper.AddConfigPath(pwd)
-		viper.SetConfigName(".stitch")
+		viper.AddConfigPath(path.Join(pwd, ".stitch"))
+		viper.SetConfigName("config.yaml")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

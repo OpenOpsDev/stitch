@@ -1,0 +1,4 @@
+docker:
+  registry: ""
+  compose:
+    version: "3"
