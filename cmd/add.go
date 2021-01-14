@@ -16,46 +16,50 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+
+	"github.com/openopsdev/go-cli-commons/prompts"
+	"github.com/roger-king/stitch/configs"
 	"github.com/spf13/cobra"
 )
 
-// composeCmd represents the compose command
-var composeCmd = &cobra.Command{
-	Use:   "compose",
-	Short: "Sets up composition of your applications",
+// addCmd represents the add command
+var addCmd = &cobra.Command{
+	Use:   "add",
+	Short: "adds a service to your container orchestration config",
 	Long: ``,
-	// Run: func(cmd *cobra.Command, args []string) {
-	// 	ps := prompts.Prompts {
-	// 		"serviceName": &prompts.UserInput{
-	// 			Label: "name of service",
-	// 		},			
-	// 		"image": &prompts.UserInput{
-	// 			Label: "image name[:tag]",
-	// 		},
-	// 	}
-	// 	answers := ps.Run()
-	// 	fmt.Print(answers)
+	Run: func(cmd *cobra.Command, args []string) {
+		ps := prompts.Prompts {
+			"serviceName": &prompts.UserInput{
+				Label: "name of service",
+			},			
+			"image": &prompts.UserInput{
+				Label: "image name[:tag]",
+			},
+		}
+		answers := ps.Run()
+		fmt.Print(answers)
 
-	// 	dc, _ := configs.NewDockerCompose()
+		dc, _ := configs.NewDockerCompose()
 
-	// 	dc.Services[answers["serviceName"]] = &configs.Service{
-	// 		Image: answers["image"],
-	// 	}
+		dc.Services[answers["serviceName"]] = &configs.Service{
+			Image: answers["image"],
+		}
 
-	// 	configs.Render("docker-compose.yml", dc)
-	// },
+		configs.Render("docker-compose.yml", dc)
+	},
 }
 
 func init() {
-	rootCmd.AddCommand(composeCmd)
+	composeCmd.AddCommand(addCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// composeCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// addCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// composeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// addCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

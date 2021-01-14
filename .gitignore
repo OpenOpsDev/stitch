@@ -17,3 +17,5 @@ info.md
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+.stitch
+docker-compose.*
