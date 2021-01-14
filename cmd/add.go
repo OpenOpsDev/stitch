@@ -17,9 +17,11 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/openopsdev/go-cli-commons/prompts"
 	"github.com/roger-king/stitch/configs"
+	"github.com/roger-king/stitch/services"
 	"github.com/spf13/cobra"
 )
 
@@ -29,21 +31,38 @@ var addCmd = &cobra.Command{
 	Short: "adds a service to your container orchestration config",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) < 1 {
+			fmt.Print("Please provide image name")
+			os.Exit(1)
+		}
+		imageName := args[0]
+		dockerAPI := services.NewDockerHubAPI()
+
+		image, err := dockerAPI.FindImage(imageName)
+
+		if err != nil {
+			fmt.Print("Failed to find image name")
+		}
+
 		ps := prompts.Prompts{
 			"serviceName": &prompts.UserInput{
 				Label: "name of service",
 			},
-			"image": &prompts.UserInput{
-				Label: "image name[:tag]",
-			},
 		}
+		fmt.Print(image.IsDatabase())
+		if image.IsDatabase() {
+			fmt.Print("is a db")
+			ps["volume"] = &prompts.ConfirmInput{
+				Label: "Persist data?",
+			}
+		}
+
 		answers := ps.Run()
-		fmt.Print(answers)
 
 		dc, _ := configs.NewDockerCompose()
 
 		dc.Services[answers["serviceName"]] = &configs.Service{
-			Image: answers["image"],
+			Image: imageName,
 		}
 
 		configs.Render("docker-compose.yml", dc)
