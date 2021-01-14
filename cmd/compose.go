@@ -23,12 +23,12 @@ import (
 var composeCmd = &cobra.Command{
 	Use:   "compose",
 	Short: "Sets up composition of your applications",
-	Long: ``,
+	Long:  ``,
 	// Run: func(cmd *cobra.Command, args []string) {
 	// 	ps := prompts.Prompts {
 	// 		"serviceName": &prompts.UserInput{
 	// 			Label: "name of service",
-	// 		},			
+	// 		},
 	// 		"image": &prompts.UserInput{
 	// 			Label: "image name[:tag]",
 	// 		},

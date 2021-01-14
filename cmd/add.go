@@ -27,12 +27,12 @@ import (
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "adds a service to your container orchestration config",
-	Long: ``,
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		ps := prompts.Prompts {
+		ps := prompts.Prompts{
 			"serviceName": &prompts.UserInput{
 				Label: "name of service",
-			},			
+			},
 			"image": &prompts.UserInput{
 				Label: "image name[:tag]",
 			},

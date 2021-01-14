@@ -15,8 +15,8 @@ type DockerComposeConfig struct {
 
 // DockerConfig -
 type DockerConfig struct {
-	Registry string `yaml:"registry"`
-	Compose *DockerComposeConfig `yaml:"compose"`
+	Registry string               `yaml:"registry"`
+	Compose  *DockerComposeConfig `yaml:"compose"`
 }
 
 // StitchConfig -
