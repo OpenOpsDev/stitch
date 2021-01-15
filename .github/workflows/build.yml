@@ -1,5 +1,6 @@
-on: push
 name: Build
+
+on: push
 
 jobs:
   build-go:

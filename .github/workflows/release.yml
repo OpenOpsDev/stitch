@@ -1,8 +1,9 @@
+name: Release
+
 on:
   release:
     types: [published]
 
-name: Build Release
 jobs:
   release-bins:
     name: Release Go Binary
