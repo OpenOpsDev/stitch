@@ -65,13 +65,23 @@ var addCmd = &cobra.Command{
 		dc, _ := configs.NewDockerCompose()
 		answers := ps.Run()
 
+		ports := strings.Split(answers["ports"], ",")
+		volumes := strings.Split(answers["volumes"], ",")
+		if len(volumes) > 0 {
+			dc.Volumes = make(map[string]interface{}, len(volumes))
+			for _, v := range volumes {
+				remote := strings.Split(v, ":")[0]
+				dc.Volumes[remote] = make(map[interface{}]interface{}) 
+			}
+		}
+
 		dc.Services[answers["serviceName"]] = &configs.Service{
 			Image:         imageName,
 			ContainerName: answers["serviceName"],
 			HostName:      answers["serviceName"],
 			Restart:       answers["restart"],
-			Volumes:       strings.Split(answers["volumes"], ","),
-			Ports:         strings.Split(answers["ports"], ","),
+			Volumes:       volumes,
+			Ports:         ports,
 		}
 
 		configs.Render("docker-compose.yml", dc)
