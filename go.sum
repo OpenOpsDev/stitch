@@ -149,6 +149,8 @@ github.com/openopsdev/go-cli-commons v0.1.2 h1:pf7dETXvEhdMiWDV2VCgP5NrvrPE2aPNz
 github.com/openopsdev/go-cli-commons v0.1.2/go.mod h1:W7MNBDWytwFKBQTxFFQxX0ZAuTK7Dm2Yg3XS34uMYXM=
 github.com/openopsdev/go-cli-commons v0.1.4 h1:dAVUUJeLBUFp1Gd52dRVVAi54yC5ylWRiyVeUqfFgfI=
 github.com/openopsdev/go-cli-commons v0.1.4/go.mod h1:qRhxwb/UN//UpOvZPHppxYN0hilWUAKsLe+ZKIfxSnc=
+github.com/openopsdev/go-cli-commons v0.1.5 h1:B63lW2CqqpbMHsE0cM/ChfwnkCr4gVne2je8N/1xsoE=
+github.com/openopsdev/go-cli-commons v0.1.5/go.mod h1:qRhxwb/UN//UpOvZPHppxYN0hilWUAKsLe+ZKIfxSnc=
 github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c/go.mod h1:lzWF7FIEvWOWxwDKqyGYQf6ZUaNfKdP144TG7ZOy1lc=
 github.com/pelletier/go-toml v1.2.0 h1:T5zMGML61Wp+FlcbWjRDT7yAxhJNAiPPLOFECq181zc=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
