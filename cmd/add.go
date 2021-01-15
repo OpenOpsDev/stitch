@@ -59,6 +59,11 @@ var addCmd = &cobra.Command{
 			},
 			"volumes": &prompts.MultiInput{
 				Label: "Volumes to bind (e.g. db:/var/internal)",
+				ValidString: `.*:.*`,
+			},
+			"environments": &prompts.MultiInput{
+				Label: "Environment variables to set (e.g. key=value)",
+				ValidString: `.*=.*`,
 			},
 		}
 
@@ -67,11 +72,25 @@ var addCmd = &cobra.Command{
 
 		ports := strings.Split(answers["ports"], ",")
 		volumes := strings.Split(answers["volumes"], ",")
+		environments := strings.Split(answers["environments"], ",")
+
+		// make volumes
 		if len(volumes) > 0 {
 			dc.Volumes = make(map[string]interface{}, len(volumes))
 			for _, v := range volumes {
 				remote := strings.Split(v, ":")[0]
 				dc.Volumes[remote] = make(map[interface{}]interface{}) 
+			}
+		}
+
+		// make environments
+		envmap := map[string]string{}
+		if len(environments) > 0 {
+			for _, e := range environments {
+				splitenvs := strings.Split(e, "=")
+				key := splitenvs[0]
+				value := splitenvs[1]
+				envmap[key] = value
 			}
 		}
 
@@ -81,6 +100,7 @@ var addCmd = &cobra.Command{
 			HostName:      answers["serviceName"],
 			Restart:       answers["restart"],
 			Volumes:       volumes,
+			Environment:   envmap,
 			Ports:         ports,
 		}
 
