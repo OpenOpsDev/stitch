@@ -1,7 +1,5 @@
 package models
 
-import "fmt"
-
 // DockerHubCategory -
 type DockerHubCategory struct {
 	Name  string `json:"name"`
@@ -32,14 +30,10 @@ type DockerHubImage struct {
 
 // IsDatabase -
 func (d *DockerHubImage) IsDatabase() bool {
-	isDb := false
-
 	for _, c := range d.Categories {
-		if c.Label == "database" {
-			isDb = true
-			break
+		if c.Name == "database" {
+			return true
 		}
 	}
-	fmt.Print("found db")
-	return isDb
+	return false
 }

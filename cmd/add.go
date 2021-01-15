@@ -18,6 +18,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/openopsdev/go-cli-commons/prompts"
 	"github.com/roger-king/stitch/configs"
@@ -38,7 +39,7 @@ var addCmd = &cobra.Command{
 		imageName := args[0]
 		dockerAPI := services.NewDockerHubAPI()
 
-		image, err := dockerAPI.FindImage(imageName)
+		_, err := dockerAPI.FindImage(imageName)
 
 		if err != nil {
 			fmt.Print("Failed to find image name")
@@ -48,21 +49,29 @@ var addCmd = &cobra.Command{
 			"serviceName": &prompts.UserInput{
 				Label: "name of service",
 			},
+			"restart": &prompts.SelectInput{
+				Label:   "restart",
+				Options: []string{"no", "always", "on-failure", "unless-stopped"},
+			},
+			"ports": &prompts.MultiInput{
+				Label:       "Ports to bind (e.g. 9000:9000)",
+				ValidString: `()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5]):()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5])`,
+			},
+			"volumes": &prompts.MultiInput{
+				Label: "Volumes to bind (e.g. db:/var/internal)",
+			},
 		}
-		fmt.Print(image.IsDatabase())
-		if image.IsDatabase() {
-			fmt.Print("is a db")
-			ps["volume"] = &prompts.ConfirmInput{
-				Label: "Persist data?",
-			}
-		}
-
-		answers := ps.Run()
 
 		dc, _ := configs.NewDockerCompose()
+		answers := ps.Run()
 
 		dc.Services[answers["serviceName"]] = &configs.Service{
-			Image: imageName,
+			Image:         imageName,
+			ContainerName: answers["serviceName"],
+			HostName:      answers["serviceName"],
+			Restart:       answers["restart"],
+			Volumes:       strings.Split(answers["volumes"], ","),
+			Ports:         strings.Split(answers["ports"], ","),
 		}
 
 		configs.Render("docker-compose.yml", dc)
