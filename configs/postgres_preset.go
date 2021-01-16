@@ -34,10 +34,12 @@ var (
 func buildPostgresServicePrompts() prompts.Answers {
 	ps := prompts.Prompts{
 		"localPort": &prompts.UserInput{
-			Label: "local port to bind to (e.g. 5432)",
+			Label:   "local port to bind to (e.g. 5432)",
+			Default: "5432",
 		},
 		"volumeName": &prompts.UserInput{
-			Label: "name of local volume to create (e.g. db)",
+			Label:   "name of local volume to create (e.g. db)",
+			Default: "db",
 		},
 	}
 
