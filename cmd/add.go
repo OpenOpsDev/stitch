@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -58,11 +59,11 @@ var addCmd = &cobra.Command{
 				ValidString: `()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5]):()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5])`,
 			},
 			"volumes": &prompts.MultiInput{
-				Label: "Volumes to bind (e.g. db:/var/internal)",
+				Label:       "Volumes to bind (e.g. db:/var/internal)",
 				ValidString: `.*:.*`,
 			},
 			"environments": &prompts.MultiInput{
-				Label: "Environment variables to set (e.g. key=value)",
+				Label:       "Environment variables to set (e.g. key=value)",
 				ValidString: `.*=.*`,
 			},
 		}
@@ -79,7 +80,7 @@ var addCmd = &cobra.Command{
 			dc.Volumes = make(map[string]interface{}, len(volumes))
 			for _, v := range volumes {
 				remote := strings.Split(v, ":")[0]
-				dc.Volumes[remote] = make(map[interface{}]interface{}) 
+				dc.Volumes[remote] = make(map[interface{}]interface{})
 			}
 		}
 
@@ -104,7 +105,11 @@ var addCmd = &cobra.Command{
 			Ports:         ports,
 		}
 
-		configs.Render("docker-compose.yml", dc)
+		err = configs.Render("docker-compose.yml", dc)
+
+		if err != nil {
+			log.Print(err)
+		}
 	},
 }
 
