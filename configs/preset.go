@@ -34,6 +34,8 @@ func NewService(image, serviceName string, withDefaults bool) *NewServiceOutputs
 		} else {
 			spec, volumes, networks = NewPostgresServiceSpec(serviceName, version)
 		}
+	default:
+		spec, volumes, networks = NewRemoteServiceSpec(serviceName, image)
 	}
 
 	service = spec.Generate()
