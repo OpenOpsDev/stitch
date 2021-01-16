@@ -46,7 +46,7 @@ func NewRedisServiceSpec(serviceName, version string) (*RedisServiceSpec, []stri
 
 func NewRedisServiceSpecWithDefaults(serviceName, version string) (*RedisServiceSpec, []string, []string) {
 	networks := make([]string, 0)
-	volumes := []string{"db"}
+	volumes := []string{"redisdb"}
 	return &RedisServiceSpec{
 		Tag:           version,
 		LocalPort:     "6379",
