@@ -21,10 +21,10 @@ type Service struct {
 
 // DockerCompose -
 type DockerCompose struct {
-	Version  string              `yaml:"version"`
-	Services map[string]*Service `yaml:"services,omitempty"`
-	Volumes  map[string]interface{}   `yaml:"volumes,omitempty"`
-	Networks map[string]string   `yaml:"networks,omitempty"`
+	Version  string                 `yaml:"version"`
+	Services map[string]*Service    `yaml:"services,omitempty"`
+	Volumes  map[string]interface{} `yaml:"volumes,omitempty"`
+	Networks map[string]string      `yaml:"networks,omitempty"`
 }
 
 func NewDockerCompose() (*DockerCompose, bool) {
@@ -57,4 +57,14 @@ func NewDockerCompose() (*DockerCompose, bool) {
 	}
 
 	return &c, true
+}
+
+func (d *DockerCompose) CreateVolumes(volumes []string) {
+	if len(d.Volumes) == 0 {
+		d.Volumes = make(map[string]interface{}, len(volumes))
+	}
+
+	for _, v := range volumes {
+		d.Volumes[v] = make(map[interface{}]interface{})
+	}
 }

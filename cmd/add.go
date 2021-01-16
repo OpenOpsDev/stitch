@@ -19,13 +19,14 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/openopsdev/go-cli-commons/prompts"
 	"github.com/roger-king/stitch/configs"
 	"github.com/roger-king/stitch/services"
 	"github.com/spf13/cobra"
 )
+
+var Defaults bool
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
@@ -37,6 +38,12 @@ var addCmd = &cobra.Command{
 			fmt.Print("Please provide image name")
 			os.Exit(1)
 		}
+
+		if len(args) > 1 {
+			fmt.Print("Too many arguments provided")
+			os.Exit(1)
+		}
+
 		imageName := args[0]
 		dockerAPI := services.NewDockerHubAPI()
 
@@ -50,65 +57,39 @@ var addCmd = &cobra.Command{
 			"serviceName": &prompts.UserInput{
 				Label: "name of service",
 			},
-			"restart": &prompts.SelectInput{
-				Label:   "restart",
-				Options: []string{"no", "always", "on-failure", "unless-stopped"},
-			},
-			"ports": &prompts.MultiInput{
-				Label:       "Ports to bind (e.g. 9000:9000)",
-				ValidString: `()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5]):()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5])`,
-			},
-			"volumes": &prompts.MultiInput{
-				Label:       "Volumes to bind (e.g. db:/var/internal)",
-				ValidString: `.*:.*`,
-			},
-			"environments": &prompts.MultiInput{
-				Label:       "Environment variables to set (e.g. key=value)",
-				ValidString: `.*=.*`,
-			},
 		}
 
-		dc, _ := configs.NewDockerCompose()
 		answers := ps.Run()
+		serviceName := answers["serviceName"]
 
-		ports := strings.Split(answers["ports"], ",")
-		volumes := strings.Split(answers["volumes"], ",")
-		environments := strings.Split(answers["environments"], ",")
+		// Create New instance of Docker-Compose
+		dc, _ := configs.NewDockerCompose()
+		// Check if service with that name exists
+		// prompt if the user would like to override the configurations set
+		if ok := dc.Services[serviceName]; ok != nil {
+			confirm := prompts.Prompts{
+				"ok": prompts.ConfirmInput{
+					Label: fmt.Sprintf("Are you you want to override %s configurations?", serviceName),
+				},
+			}
+			confirmAnswers := confirm.Run()
 
-		// make volumes
-		if len(volumes) > 0 {
-			dc.Volumes = make(map[string]interface{}, len(volumes))
-			for _, v := range volumes {
-				remote := strings.Split(v, ":")[0]
-				dc.Volumes[remote] = make(map[interface{}]interface{})
+			if confirmAnswers["ok"] == "no" {
+				os.Exit(1)
 			}
 		}
 
-		// make environments
-		envmap := map[string]string{}
-		if len(environments) > 0 {
-			for _, e := range environments {
-				splitenvs := strings.Split(e, "=")
-				key := splitenvs[0]
-				value := splitenvs[1]
-				envmap[key] = value
-			}
-		}
-
-		dc.Services[answers["serviceName"]] = &configs.Service{
-			Image:         imageName,
-			ContainerName: answers["serviceName"],
-			HostName:      answers["serviceName"],
-			Restart:       answers["restart"],
-			Volumes:       volumes,
-			Environment:   envmap,
-			Ports:         ports,
-		}
+		// Find Kind of service (May want to offer if remote and has preset do you want to use our prest)
+		service := configs.NewService(imageName, serviceName, Defaults)
+		dc.Services[serviceName] = service.Service
+		dc.CreateVolumes(service.Volumes)
 
 		err = configs.Render("docker-compose.yml", dc)
 
 		if err != nil {
 			log.Print(err)
+		} else {
+			log.Print("Done.")
 		}
 	},
 }
@@ -124,5 +105,5 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// addCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	addCmd.Flags().BoolVarP(&Defaults, "yes", "y", false, "add with defaults")
 }
