@@ -40,6 +40,12 @@ func NewService(image, serviceName string, withDefaults bool) *NewServiceOutputs
 		} else {
 			spec, volumes, networks = NewRedisServiceSpec(serviceName, version)
 		}
+	case "rabbitmq":
+		if withDefaults {
+			spec, volumes, networks = NewRabbitMQServiceSpecWithDefaults(serviceName, version)
+		} else {
+			spec, volumes, networks = NewRabbitMQServiceSpec(serviceName, version)
+		}
 	default:
 		spec, volumes, networks = NewRemoteServiceSpec(serviceName, image)
 	}
