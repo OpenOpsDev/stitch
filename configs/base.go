@@ -33,5 +33,10 @@ func Render(dest string, s interface{}) error {
 	}
 
 	err = writeToFile(dest, string(results))
-	return err
+
+	if err != nil {
+		return err
+	}
+	
+	return nil
 }
