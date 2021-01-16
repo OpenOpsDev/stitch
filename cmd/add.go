@@ -26,6 +26,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var Defaults bool
+
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add",
@@ -53,9 +55,26 @@ var addCmd = &cobra.Command{
 
 		answers := ps.Run()
 		serviceName := answers["serviceName"]
-		service := configs.NewService(imageName, serviceName)
 
+		// Create New instance of Docker-Compose
 		dc, _ := configs.NewDockerCompose()
+		// Check if service with that name exists
+		// prompt if the user would like to override the configurations set
+		if ok := dc.Services[serviceName]; ok != nil {
+			confirm := prompts.Prompts{
+				"ok": prompts.ConfirmInput{
+					Label: fmt.Sprintf("Are you you want to override %s configurations?", serviceName),
+				},
+			}
+			confirmAnswers := confirm.Run()
+
+			if confirmAnswers["ok"] == "no" {
+				os.Exit(1)
+			}
+		}
+
+		// Find Kind of service (May want to offer if remote and has preset do you want to use our prest)
+		service := configs.NewService(imageName, serviceName, Defaults)
 		dc.Services[serviceName] = service.Service
 		dc.CreateVolumes(service.Volumes)
 
@@ -63,6 +82,8 @@ var addCmd = &cobra.Command{
 
 		if err != nil {
 			log.Print(err)
+		} else {
+			log.Print("Done.")
 		}
 
 		// ps := prompts.Prompts{
@@ -128,5 +149,5 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// addCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	addCmd.Flags().BoolVarP(&Defaults, "yes", "y", false, "add with defaults")
 }

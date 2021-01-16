@@ -17,14 +17,8 @@ type PostgresServiceSpec struct {
 	VolumeName    string
 }
 
-func buildPostgresServicePrompts() prompts.Answers {
-	ps := prompts.Prompts{
-		"localPort": &prompts.UserInput{
-			Label: "local port to bind to (e.g. 5432)",
-		},
-		"volumeName": &prompts.UserInput{
-			Label: "name of local volume to create (e.g. db)",
-		},
+var (
+	commonPostgresPrompts = prompts.Prompts{
 		"dbUser": &prompts.UserInput{
 			Label: "name of the user to create inside of the DB",
 		},
@@ -34,6 +28,21 @@ func buildPostgresServicePrompts() prompts.Answers {
 		"dbName": &prompts.UserInput{
 			Label: "name of the DB to connect to",
 		},
+	}
+)
+
+func buildPostgresServicePrompts() prompts.Answers {
+	ps := prompts.Prompts{
+		"localPort": &prompts.UserInput{
+			Label: "local port to bind to (e.g. 5432)",
+		},
+		"volumeName": &prompts.UserInput{
+			Label: "name of local volume to create (e.g. db)",
+		},
+	}
+
+	for k, v := range commonPostgresPrompts {
+		ps[k] = v
 	}
 
 	return ps.Run()
@@ -48,6 +57,23 @@ func NewPostgresServiceSpec(serviceName, version string) (*PostgresServiceSpec, 
 		Tag:           version,
 		LocalPort:     answers["localPort"],
 		VolumeName:    answers["volumeName"],
+		ContainerName: serviceName,
+		HostName:      serviceName,
+		User:          answers["dbUser"],
+		Password:      answers["dbPassword"],
+		DB:            answers["dbName"],
+	}, volumes, networks
+}
+
+func NewPostgresServiceSpecWithDefaults(serviceName, version string) (*PostgresServiceSpec, []string, []string) {
+	// Run Prompts here
+	answers := commonPostgresPrompts.Run()
+	networks := make([]string, 0)
+	volumes := []string{"db"}
+	return &PostgresServiceSpec{
+		Tag:           version,
+		LocalPort:     "5432",
+		VolumeName:    "db",
 		ContainerName: serviceName,
 		HostName:      serviceName,
 		User:          answers["dbUser"],

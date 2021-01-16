@@ -14,7 +14,7 @@ type NewServiceOutputs struct {
 	Networks []string
 }
 
-func NewService(image, serviceName string) *NewServiceOutputs {
+func NewService(image, serviceName string, withDefaults bool) *NewServiceOutputs {
 	var service *Service
 	var spec ServiceSpec
 	var volumes []string
@@ -29,7 +29,11 @@ func NewService(image, serviceName string) *NewServiceOutputs {
 
 	switch name {
 	case "postgres":
-		spec, volumes, networks = NewPostgresServiceSpec(serviceName, version)
+		if withDefaults {
+			spec, volumes, networks = NewPostgresServiceSpecWithDefaults(serviceName, version)
+		} else {
+			spec, volumes, networks = NewPostgresServiceSpec(serviceName, version)
+		}
 	}
 
 	service = spec.Generate()
