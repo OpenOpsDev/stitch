@@ -38,7 +38,7 @@ var initCmd = &cobra.Command{
 		err := configs.Render("./.stitch/config.yaml", config)
 
 		if err != nil {
-			fmt.Errorf("Found an error rendering", err)
+			log.Errorf("Found an error rendering %v", err)
 		}
 	},
 }
