@@ -60,7 +60,10 @@ func NewDockerCompose() (*DockerCompose, bool) {
 }
 
 func (d *DockerCompose) CreateVolumes(volumes []string) {
-	d.Volumes = make(map[string]interface{}, len(volumes))
+	if len(d.Volumes) == 0 {
+		d.Volumes = make(map[string]interface{}, len(volumes))
+	}
+
 	for _, v := range volumes {
 		d.Volumes[v] = make(map[interface{}]interface{})
 	}
