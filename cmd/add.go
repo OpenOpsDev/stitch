@@ -38,6 +38,12 @@ var addCmd = &cobra.Command{
 			fmt.Print("Please provide image name")
 			os.Exit(1)
 		}
+
+		if len(args) > 1 {
+			fmt.Print("Too many arguments provided")
+			os.Exit(1)
+		}
+
 		imageName := args[0]
 		dockerAPI := services.NewDockerHubAPI()
 
