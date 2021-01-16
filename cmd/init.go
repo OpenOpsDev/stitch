@@ -17,8 +17,8 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 
+	"github.com/openopsdev/go-cli-commons/logger"
 	"github.com/roger-king/stitch/configs"
 	"github.com/spf13/cobra"
 )
@@ -39,7 +39,7 @@ var initCmd = &cobra.Command{
 		err := configs.Render("./.stitch/config.yaml", config)
 
 		if err != nil {
-			log.Print(fmt.Errorf("Found an error rendering %v", err))
+			logger.Fatal(fmt.Errorf("Found an error rendering %v", err).Error())
 		}
 	},
 }
