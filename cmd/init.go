@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/roger-king/stitch/configs"
 	"github.com/spf13/cobra"
@@ -38,7 +39,7 @@ var initCmd = &cobra.Command{
 		err := configs.Render("./.stitch/config.yaml", config)
 
 		if err != nil {
-			log.Errorf("Found an error rendering %v", err)
+			log.Print(fmt.Errorf("Found an error rendering %v", err))
 		}
 	},
 }
