@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/openopsdev/go-cli-commons/prompts"
 	"github.com/roger-king/stitch/configs"
@@ -50,66 +49,71 @@ var addCmd = &cobra.Command{
 			"serviceName": &prompts.UserInput{
 				Label: "name of service",
 			},
-			"restart": &prompts.SelectInput{
-				Label:   "restart",
-				Options: []string{"no", "always", "on-failure", "unless-stopped"},
-			},
-			"ports": &prompts.MultiInput{
-				Label:       "Ports to bind (e.g. 9000:9000)",
-				ValidString: `()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5]):()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5])`,
-			},
-			"volumes": &prompts.MultiInput{
-				Label:       "Volumes to bind (e.g. db:/var/internal)",
-				ValidString: `.*:.*`,
-			},
-			"environments": &prompts.MultiInput{
-				Label:       "Environment variables to set (e.g. key=value)",
-				ValidString: `.*=.*`,
-			},
 		}
+
+		answers := ps.Run()
+		serviceName := answers["serviceName"]
+		service := configs.NewService(imageName, serviceName)
 
 		dc, _ := configs.NewDockerCompose()
-		answers := ps.Run()
-
-		ports := strings.Split(answers["ports"], ",")
-		volumes := strings.Split(answers["volumes"], ",")
-		environments := strings.Split(answers["environments"], ",")
-
-		// make volumes
-		if len(volumes) > 0 {
-			dc.Volumes = make(map[string]interface{}, len(volumes))
-			for _, v := range volumes {
-				remote := strings.Split(v, ":")[0]
-				dc.Volumes[remote] = make(map[interface{}]interface{})
-			}
-		}
-
-		// make environments
-		envmap := map[string]string{}
-		if len(environments) > 0 {
-			for _, e := range environments {
-				splitenvs := strings.Split(e, "=")
-				key := splitenvs[0]
-				value := splitenvs[1]
-				envmap[key] = value
-			}
-		}
-
-		dc.Services[answers["serviceName"]] = &configs.Service{
-			Image:         imageName,
-			ContainerName: answers["serviceName"],
-			HostName:      answers["serviceName"],
-			Restart:       answers["restart"],
-			Volumes:       volumes,
-			Environment:   envmap,
-			Ports:         ports,
-		}
+		dc.Services[serviceName] = service.Service
+		dc.CreateVolumes(service.Volumes)
 
 		err = configs.Render("docker-compose.yml", dc)
 
 		if err != nil {
 			log.Print(err)
 		}
+
+		// ps := prompts.Prompts{
+		// 	"serviceName": &prompts.UserInput{
+		// 		Label: "name of service",
+		// 	},
+		// 	"restart": &prompts.SelectInput{
+		// 		Label:   "restart",
+		// 		Options: []string{"no", "always", "on-failure", "unless-stopped"},
+		// 	},
+		// 	"ports": &prompts.MultiInput{
+		// 		Label:       "Ports to bind (e.g. 9000:9000)",
+		// 		ValidString: `()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5]):()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5])`,
+		// 	},
+		// 	"volumes": &prompts.MultiInput{
+		// 		Label:       "Volumes to bind (e.g. db:/var/internal)",
+		// 		ValidString: `.*:.*`,
+		// 	},
+		// 	"environments": &prompts.MultiInput{
+		// 		Label:       "Environment variables to set (e.g. key=value)",
+		// 		ValidString: `.*=.*`,
+		// 	},
+		// }
+
+		// dc, _ := configs.NewDockerCompose()
+		// answers := ps.Run()
+
+		// ports := strings.Split(answers["ports"], ",")
+		// volumes := strings.Split(answers["volumes"], ",")
+		// environments := strings.Split(answers["environments"], ",")
+
+		// // make volumes
+		// if len(volumes) > 0 {
+		// 	dc.Volumes = make(map[string]interface{}, len(volumes))
+		// 	for _, v := range volumes {
+		// 		remote := strings.Split(v, ":")[0]
+		// 		dc.Volumes[remote] = make(map[interface{}]interface{})
+		// 	}
+		// }
+
+		// // make environments
+		// envmap := map[string]string{}
+		// if len(environments) > 0 {
+		// 	for _, e := range environments {
+		// 		splitenvs := strings.Split(e, "=")
+		// 		key := splitenvs[0]
+		// 		value := splitenvs[1]
+		// 		envmap[key] = value
+		// 	}
+		// }
+
 	},
 }
 
