@@ -17,9 +17,9 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
+	"github.com/openopsdev/go-cli-commons/logger"
 	"github.com/openopsdev/go-cli-commons/prompts"
 	"github.com/roger-king/stitch/configs"
 	"github.com/roger-king/stitch/services"
@@ -35,13 +35,11 @@ var addCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			fmt.Print("Please provide image name")
-			os.Exit(1)
+			logger.Fatal("Missing image name")
 		}
 
 		if len(args) > 1 {
-			fmt.Print("Too many arguments provided")
-			os.Exit(1)
+			logger.Fatal("Too many arguments provided")
 		}
 
 		imageName := args[0]
@@ -50,7 +48,7 @@ var addCmd = &cobra.Command{
 		_, err := dockerAPI.FindImage(imageName)
 
 		if err != nil {
-			fmt.Print("Failed to find image name")
+			logger.Warning("Could not find image in docker hub")
 		}
 
 		ps := prompts.Prompts{
@@ -87,10 +85,11 @@ var addCmd = &cobra.Command{
 		err = configs.Render("docker-compose.yml", dc)
 
 		if err != nil {
-			log.Print(err)
-		} else {
-			log.Print("Done.")
+			logger.Error(fmt.Errorf("Something went wrong rendering docker-compose file: %v", err).Error())
+			os.Exit(1)
 		}
+
+		logger.Info("Done.")
 	},
 }
 
