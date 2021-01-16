@@ -34,6 +34,12 @@ func NewService(image, serviceName string, withDefaults bool) *NewServiceOutputs
 		} else {
 			spec, volumes, networks = NewPostgresServiceSpec(serviceName, version)
 		}
+	case "redis":
+		if withDefaults {
+			spec, volumes, networks = NewRedisServiceSpecWithDefaults(serviceName, version)
+		} else {
+			spec, volumes, networks = NewRedisServiceSpec(serviceName, version)
+		}
 	default:
 		spec, volumes, networks = NewRemoteServiceSpec(serviceName, image)
 	}
