@@ -49,7 +49,7 @@ to quickly create a Cobra application.`,
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		logger.Fatal(fmt.Errorf("Failed to start CLI", err).Error())
+		logger.Fatal(fmt.Errorf("Failed to start CLI: %v", err).Error())
 	}
 }
 
