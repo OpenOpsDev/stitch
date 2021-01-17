@@ -1,10 +1,12 @@
 package configs
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
 
+	"github.com/openopsdev/go-cli-commons/logger"
 	"gopkg.in/yaml.v2"
 )
 
@@ -30,7 +32,7 @@ func NewStichConfig() (*StitchConfig, bool) {
 	cwd, err := os.Getwd()
 
 	if err != nil {
-		os.Exit(1)
+		logger.Fatal(fmt.Errorf("Failed to get current working directory: %v", err).Error())
 	}
 
 	existingConfigPath := path.Join(cwd, ".stitch/config.yaml")
@@ -38,7 +40,7 @@ func NewStichConfig() (*StitchConfig, bool) {
 		err := os.Mkdir(path.Join(cwd, ".stitch"), os.ModePerm)
 
 		if err != nil {
-			os.Exit(1)
+			logger.Fatal(fmt.Errorf("Failed to get current working directory: %v", err).Error())
 		}
 		return &c, false
 	}
@@ -46,13 +48,13 @@ func NewStichConfig() (*StitchConfig, bool) {
 	contents, err := ioutil.ReadFile(existingConfigPath)
 
 	if err != nil {
-		os.Exit(1)
+		logger.Fatal(fmt.Errorf("Failed to read existing config: %v", err).Error())
 	}
 
 	err = yaml.Unmarshal(contents, &c)
 
 	if err != nil {
-		os.Exit(1)
+		logger.Fatal(fmt.Errorf("Failed to unmarshal config %v", err).Error())
 	}
 
 	return &c, true

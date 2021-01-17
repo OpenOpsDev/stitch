@@ -1,22 +1,34 @@
 package configs
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
 
+	"github.com/openopsdev/go-cli-commons/logger"
 	"gopkg.in/yaml.v2"
 )
+
+type ServiceBuild struct {
+	Context    string `yaml:"context,omitempty"`
+	Dockerfile string `yaml:"dockerfile,omitempty"`
+	Target     string `yaml:"target,omitempty"`
+}
 
 // Service - representation of docker-compose service options
 type Service struct {
 	Image         string            `yaml:"image,omitempty"`
+	Build         *ServiceBuild     `yaml:"build,omitempty"`
+	Command       []string          `yaml:"command,omitempty,flow"`
 	ContainerName string            `yaml:"container_name,omitempty"`
 	HostName      string            `yaml:"hostname,omitempty"`
 	Restart       string            `yaml:"restart,omitempty"`
 	Environment   map[string]string `yaml:"environment,omitempty"`
 	Volumes       []string          `yaml:"volumes,omitempty"`
 	Ports         []string          `yaml:"ports,omitempty"`
+	Links         []string          `yaml:"links,omitempty"`
+	DependsOn     []string          `yaml:"depends_on,omitempty"`
 }
 
 // DockerCompose -
@@ -32,7 +44,7 @@ func NewDockerCompose() (*DockerCompose, bool) {
 	cwd, err := os.Getwd()
 
 	if err != nil {
-		os.Exit(1)
+		logger.Fatal(fmt.Errorf("Failed to get current working directory: %v", err).Error())
 	}
 
 	existingConfigPath := path.Join(cwd, "docker-compose.yml")
@@ -47,13 +59,13 @@ func NewDockerCompose() (*DockerCompose, bool) {
 	contents, err := ioutil.ReadFile(existingConfigPath)
 
 	if err != nil {
-		os.Exit(1)
+		logger.Fatal(fmt.Errorf("Failed to read existing docker-compose file: %v", err).Error())
 	}
 
 	err = yaml.Unmarshal(contents, &c)
 
 	if err != nil {
-		os.Exit(1)
+		logger.Fatal(fmt.Errorf("Failed to unmarshal existing docker-compose file: %v", err).Error())
 	}
 
 	return &c, true
