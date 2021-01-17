@@ -43,6 +43,7 @@ var addCmd = &cobra.Command{
 		}
 
 		imageName := args[0]
+		isLocal := imageName[0] == '.'
 		dockerAPI := services.NewDockerHubAPI()
 
 		_, err := dockerAPI.FindImage(imageName)
@@ -80,13 +81,15 @@ var addCmd = &cobra.Command{
 		// Find Kind of service (May want to offer if remote and has preset do you want to use our prest)
 		service := configs.NewService(imageName, serviceName, Defaults)
 		dc.Services[serviceName] = service.Service
-		dc.CreateVolumes(service.Volumes)
+
+		if !isLocal {
+			dc.CreateVolumes(service.Volumes)
+		}
 
 		err = configs.Render("docker-compose.yml", dc)
 
 		if err != nil {
-			logger.Error(fmt.Errorf("Something went wrong rendering docker-compose file: %v", err).Error())
-			os.Exit(1)
+			logger.Fatal(fmt.Errorf("Something went wrong rendering docker-compose file: %v", err).Error())
 		}
 
 		logger.Info("Done.")
