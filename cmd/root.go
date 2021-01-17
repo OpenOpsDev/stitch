@@ -20,6 +20,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/openopsdev/go-cli-commons/logger"
 	"github.com/spf13/cobra"
 
 	"github.com/spf13/viper"
@@ -48,8 +49,7 @@ to quickly create a Cobra application.`,
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		logger.Fatal(fmt.Errorf("Failed to start CLI", err).Error())
 	}
 }
 
@@ -76,8 +76,7 @@ func initConfig() {
 		// Find current working directory
 		pwd, err := os.Getwd()
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			logger.Fatal(fmt.Errorf("Failed to get current working directory: %v", err).Error())
 		}
 
 		// Search config in home directory with name ".stitch" (without extension).
