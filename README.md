@@ -4,6 +4,7 @@
 
 ![Lint](https://github.com/OpenOpsDev/stitch/workflows/Lint/badge.svg)
 ![Build](https://github.com/OpenOpsDev/stitch/workflows/Build/badge.svg)
+![Release](https://github.com/OpenOpsDev/stitch/workflows/Release/badge.svg)
 
 # Stitch: Weaving micro-services together
 
