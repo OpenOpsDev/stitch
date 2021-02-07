@@ -24,26 +24,6 @@ var composeCmd = &cobra.Command{
 	Use:   "compose",
 	Short: "Sets up composition of your applications",
 	Long:  ``,
-	// Run: func(cmd *cobra.Command, args []string) {
-	// 	ps := prompts.Prompts {
-	// 		"serviceName": &prompts.UserInput{
-	// 			Label: "name of service",
-	// 		},
-	// 		"image": &prompts.UserInput{
-	// 			Label: "image name[:tag]",
-	// 		},
-	// 	}
-	// 	answers := ps.Run()
-	// 	fmt.Print(answers)
-
-	// 	dc, _ := configs.NewDockerCompose()
-
-	// 	dc.Services[answers["serviceName"]] = &configs.Service{
-	// 		Image: answers["image"],
-	// 	}
-
-	// 	configs.Render("docker-compose.yml", dc)
-	// },
 }
 
 func init() {
