@@ -28,6 +28,7 @@ var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Interactively create or update a .stitch/config.yaml file",
 	Run: func(cmd *cobra.Command, args []string) {
+		// globalConfig, hasExisting := configs.NewGlobalStitchConfig()
 		config, hasExisting := configs.NewStichConfig()
 		if !hasExisting {
 			config.Docker = &configs.DockerConfig{
@@ -39,7 +40,7 @@ var initCmd = &cobra.Command{
 		err := configs.Render("./.stitch/config.yaml", config)
 
 		if err != nil {
-			logger.Fatal(fmt.Errorf("Found an error rendering %v", err).Error())
+			logger.Fatal(fmt.Errorf("found an error rendering %v", err).Error())
 		}
 	},
 }
