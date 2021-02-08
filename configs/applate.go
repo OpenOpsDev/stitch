@@ -2,13 +2,16 @@ package configs
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 
+	"github.com/openopsdev/go-cli-commons/logger"
 	"github.com/roger-king/stitch/templates"
 	"github.com/roger-king/stitch/utils"
+	"gopkg.in/yaml.v2"
 )
 
 type Templater interface {
@@ -19,17 +22,40 @@ type Applate struct {
 	Source     string
 	Answer     map[string]string
 	Dependency DependencyConfig
-	cacheDir   string
 }
 
-func cacheDir() string {
+func findCacheDir() string {
 	homedir, _ := os.UserHomeDir()
 	return path.Join(homedir, ".stitch/applates")
 }
 
+var cacheDir = findCacheDir()
+
 func NewApplate(source string) Applate {
+	var dependencyConfig DependencyConfig
+	applateDir := path.Join(cacheDir, source)
+	applateConfig := path.Join(applateDir, ".stitch/applate.yaml")
+	contents, err := ioutil.ReadFile(applateConfig)
+
+	if err != nil {
+		logger.Fatal(fmt.Errorf("failed to read existing config: %v", err).Error())
+	}
+
+	err = yaml.Unmarshal(contents, &dependencyConfig)
+
+	if err != nil {
+		logger.Fatal(fmt.Errorf("failed to build applate config: %v", err).Error())
+	}
+
+	err = dependencyConfig.Init()
+
+	if err != nil {
+		logger.Fatal(fmt.Errorf("failed to init project", err).Error())
+	}
+
 	return Applate{
-		Source: path.Join(cacheDir(), source),
+		Source:     applateDir,
+		Dependency: dependencyConfig,
 	}
 }
 
@@ -72,7 +98,7 @@ func (a Applate) findTemplates() ([]string, error) {
 	var files []string
 
 	err := filepath.Walk(a.Source, func(path string, info os.FileInfo, err error) error {
-		isConfig := strings.Contains(path, "config.yaml")
+		isConfig := strings.Contains(path, "applate.yaml")
 		isFileToAdd := !isConfig && !info.IsDir()
 		if isFileToAdd {
 			files = append(files, path)
