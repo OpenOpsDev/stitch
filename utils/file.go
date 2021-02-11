@@ -6,6 +6,7 @@ import (
 	"path"
 )
 
+// TODO: turn into an interface
 type File struct {
 	Name   string
 	Source string

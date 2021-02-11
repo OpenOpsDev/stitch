@@ -27,7 +27,9 @@ var initAppCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		appplate := configs.NewApplate("test")
+		var answers map[string]string
+		a := args[0]
+		appplate := configs.NewApplate(a, answers)
 		applateErrors := appplate.Run()
 
 		if len(applateErrors) > 0 {

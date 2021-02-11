@@ -31,20 +31,46 @@ func findCacheDir() string {
 
 var cacheDir = findCacheDir()
 
-func NewApplate(source string) Applate {
+func unmarshalYaml(obj interface{}) interface{} {
+
+	return obj
+}
+
+func NewApplate(source string, answers map[string]string) Applate {
+	var promptConfig PromptConfig
 	var dependencyConfig DependencyConfig
 	applateDir := path.Join(cacheDir, source)
-	applateConfig := path.Join(applateDir, ".stitch/applate.yaml")
-	contents, err := ioutil.ReadFile(applateConfig)
+
+	// TODO: split into a Go Routine
+	applateConfigFilePath := path.Join(applateDir, ".stitch/applate.yaml")
+	applateConfigContents, err := ioutil.ReadFile(applateConfigFilePath)
 
 	if err != nil {
 		logger.Fatal(fmt.Errorf("failed to read existing config: %v", err).Error())
 	}
 
-	err = yaml.Unmarshal(contents, &dependencyConfig)
+	err = yaml.Unmarshal(applateConfigContents, &dependencyConfig)
 
 	if err != nil {
 		logger.Fatal(fmt.Errorf("failed to build applate config: %v", err).Error())
+	}
+	
+	promptAnswers := promptConfig.Build().Run()
+	dependencyConfig.Vars = promptAnswers
+
+
+	// TODO: handle no prompt config file
+	applatePromptConfigPath := path.Join(applateDir, ".stitch/prompts.yaml")
+	applatePromptContent, err := ioutil.ReadFile(applatePromptConfigPath)
+
+	if err != nil {
+		logger.Fatal(fmt.Errorf("failed to read prompt config: %v", err).Error())
+	}
+
+	err = yaml.Unmarshal(applatePromptContent, &promptConfig)
+
+	if err != nil {
+		logger.Fatal(fmt.Errorf("failed to build prompt config: %v", err).Error())
 	}
 
 	err = dependencyConfig.Init()
@@ -56,6 +82,7 @@ func NewApplate(source string) Applate {
 	return Applate{
 		Source:     applateDir,
 		Dependency: dependencyConfig,
+		Answer:     promptAnswers,
 	}
 }
 
