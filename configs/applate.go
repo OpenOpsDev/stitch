@@ -31,11 +31,6 @@ func findCacheDir() string {
 
 var cacheDir = findCacheDir()
 
-func unmarshalYaml(obj interface{}) interface{} {
-
-	return obj
-}
-
 func NewApplate(source string, answers map[string]string) Applate {
 	var promptConfig PromptConfig
 	var dependencyConfig DependencyConfig
