@@ -2,6 +2,7 @@ package configs
 
 import (
 	"bytes"
+	"fmt"
 	"os/exec"
 	"regexp"
 	"strings"
@@ -14,11 +15,16 @@ type LanguageCommands struct {
 	Install string `yaml:"install"`
 }
 
+type Dependency struct {
+	Name    string `yaml:"name"`
+	Version string `yaml:"version"`
+}
+
 type DependencyConfig struct {
 	Language     string            `yaml:"language"`
 	Version      string            `yaml:"version"`
 	Commands     LanguageCommands  `yaml:"commands"`
-	Dependencies map[string]string `yaml:"dependencies"`
+	Dependencies []Dependency 		`yaml:"dependencies"`
 	Vars         map[string]string
 }
 
@@ -45,13 +51,38 @@ func (d *DependencyConfig) Init() error {
 	return nil
 }
 
-func (d *DependencyConfig) Install() (string, error) {
-	cmd := exec.Command(d.Commands.Install)
+func (d *DependencyConfig) Install(dep string) error {
+	splitInstallCmd := strings.Split(d.Commands.Install, " ")
+	cmd := exec.Command(splitInstallCmd[0])
+	args := splitInstallCmd[0:]
+	args = append(args, dep)
+	cmd.Args = args
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()
 	if err != nil {
-		return "", err
+		logger.Error(err.Error())
+		return err
 	}
-	return out.String(), nil
+	logger.Info(out.String())
+	return nil
+}
+
+func (d *DependencyConfig) InstallDependencies() error {
+	logger.Info("Installing dependencies")
+	for _, dep := range d.Dependencies {
+		depString := dep.Name
+
+		if len(dep.Version) > 0 {
+			depString = fmt.Sprintf("%s@%s", depString, dep.Version)
+		}
+
+		err := d.Install(depString)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

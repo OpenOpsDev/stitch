@@ -82,12 +82,12 @@ func NewApplate(source string, answers map[string]string) Applate {
 }
 
 func (a Applate) Run() []error {
-	var readErrors []error
+	var runErrors []error
 	files, err := a.findTemplates()
 
 	if err != nil {
-		readErrors = append(readErrors, fmt.Errorf("cannot find tempalte: %v", err.Error()))
-		return readErrors
+		runErrors = append(runErrors, fmt.Errorf("cannot find tempalte: %v", err.Error()))
+		return runErrors
 	}
 
 	for _, f := range files {
@@ -97,7 +97,7 @@ func (a Applate) Run() []error {
 		rawData, err := file.Read()
 
 		if err != nil {
-			readErrors = append(readErrors, fmt.Errorf("failed to read %s: %v", f, err.Error()))
+			runErrors = append(runErrors, fmt.Errorf("failed to read %s: %v", f, err.Error()))
 			continue
 		}
 
@@ -109,11 +109,19 @@ func (a Applate) Run() []error {
 		err = template.Save(a.Answer)
 
 		if err != nil {
-			readErrors = append(readErrors, fmt.Errorf("failed to generate %s template: %v", f, err.Error()))
+			runErrors = append(runErrors, fmt.Errorf("failed to generate %s template: %v", f, err.Error()))
 		}
 	}
 
-	return readErrors
+	if a.Dependency.Dependencies != nil {
+		err = a.Dependency.InstallDependencies()
+
+		if err != nil {
+			runErrors = append(runErrors, fmt.Errorf("failed to install: %v", err.Error()))
+		}
+	}
+
+	return runErrors
 }
 
 func (a Applate) findTemplates() ([]string, error) {
