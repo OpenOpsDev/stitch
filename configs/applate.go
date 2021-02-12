@@ -71,7 +71,7 @@ func NewApplate(source string, answers map[string]string) Applate {
 	err = dependencyConfig.Init()
 
 	if err != nil {
-		logger.Fatal(fmt.Errorf("failed to init project", err).Error())
+		logger.Fatal(fmt.Errorf("failed to init project: %v", err).Error())
 	}
 
 	return Applate{

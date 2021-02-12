@@ -19,6 +19,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/openopsdev/go-cli-commons/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -28,18 +29,13 @@ var configCmd = &cobra.Command{
 	Short: "setup the global configuration for stitch",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		home, err := os.UserHomeDir()
+		home, _ := os.UserHomeDir()
+
+		err := os.MkdirAll(path.Join(home, ".stitch"), os.ModePerm)
 
 		if err != nil {
-
+			logger.Fatal(err.Error())
 		}
-
-		err = os.MkdirAll(path.Join(home, ".stitch"), os.ModePerm)
-
-		if err != nil {
-
-		}
-
 	},
 }
 
