@@ -1,4 +1,4 @@
-module github.com/roger-king/stitch
+module github.com/openopsdev/stitch
 
 go 1.15
 

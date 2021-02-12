@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/openopsdev/go-cli-commons/logger"
-	"github.com/roger-king/stitch/templates"
-	"github.com/roger-king/stitch/utils"
+	"github.com/openopsdev/stitch/templates"
+	"github.com/openopsdev/stitch/utils"
 	"gopkg.in/yaml.v2"
 )
 
@@ -36,24 +36,6 @@ func NewApplate(source string, answers map[string]string) Applate {
 	var dependencyConfig DependencyConfig
 	applateDir := path.Join(cacheDir, source)
 
-	// TODO: split into a Go Routine
-	applateConfigFilePath := path.Join(applateDir, ".stitch/applate.yaml")
-	applateConfigContents, err := ioutil.ReadFile(applateConfigFilePath)
-
-	if err != nil {
-		logger.Fatal(fmt.Errorf("failed to read existing config: %v", err).Error())
-	}
-
-	err = yaml.Unmarshal(applateConfigContents, &dependencyConfig)
-
-	if err != nil {
-		logger.Fatal(fmt.Errorf("failed to build applate config: %v", err).Error())
-	}
-	
-	promptAnswers := promptConfig.Build().Run()
-	dependencyConfig.Vars = promptAnswers
-
-
 	// TODO: handle no prompt config file
 	applatePromptConfigPath := path.Join(applateDir, ".stitch/prompts.yaml")
 	applatePromptContent, err := ioutil.ReadFile(applatePromptConfigPath)
@@ -67,6 +49,24 @@ func NewApplate(source string, answers map[string]string) Applate {
 	if err != nil {
 		logger.Fatal(fmt.Errorf("failed to build prompt config: %v", err).Error())
 	}
+	prompts := promptConfig.Build()
+	promptAnswers := prompts.Run()
+
+	// TODO: split into a Go Routine
+	applateConfigFilePath := path.Join(applateDir, ".stitch/applate.yaml")
+	applateConfigContents, err := ioutil.ReadFile(applateConfigFilePath)
+
+	if err != nil {
+		logger.Fatal(fmt.Errorf("failed to read existing config: %v", err).Error())
+	}
+
+	err = yaml.Unmarshal(applateConfigContents, &dependencyConfig)
+
+	if err != nil {
+		logger.Fatal(fmt.Errorf("failed to build applate config: %v", err).Error())
+	}
+
+	dependencyConfig.Vars = promptAnswers
 
 	err = dependencyConfig.Init()
 

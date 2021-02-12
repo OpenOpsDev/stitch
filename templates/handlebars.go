@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/aymerick/raymond"
-	"github.com/roger-king/stitch/utils"
+	"github.com/openopsdev/stitch/utils"
 )
 
 type HandlebarTemplate struct {

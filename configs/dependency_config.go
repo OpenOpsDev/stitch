@@ -22,14 +22,14 @@ type DependencyConfig struct {
 	Vars         map[string]string
 }
 
-func replaceVariable(s string) string {
+func replaceVariable(s, newValue string) string {
 	re := regexp.MustCompile(`{{([^}]*)}}`)
 	str := re.ReplaceAll([]byte(s), []byte("github.com/roger-king/test"))
 	return string(str)
 }
 
 func (d *DependencyConfig) Init() error {
-	initCmd := replaceVariable(d.Commands.Init)
+	initCmd := replaceVariable(d.Commands.Init, d.Vars["initVar"])
 	separateInitCmd := strings.Split(initCmd, " ")
 	cmd := exec.Command(separateInitCmd[0])
 	args := separateInitCmd[0:]
