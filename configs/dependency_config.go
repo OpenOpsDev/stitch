@@ -21,16 +21,16 @@ type Dependency struct {
 }
 
 type DependencyConfig struct {
-	Language     string            `yaml:"language"`
-	Version      string            `yaml:"version"`
-	Commands     LanguageCommands  `yaml:"commands"`
-	Dependencies []Dependency 		`yaml:"dependencies"`
+	Language     string           `yaml:"language"`
+	Version      string           `yaml:"version"`
+	Commands     LanguageCommands `yaml:"commands"`
+	Dependencies []Dependency     `yaml:"dependencies"`
 	Vars         map[string]string
 }
 
 func replaceVariable(s, newValue string) string {
 	re := regexp.MustCompile(`{{([^}]*)}}`)
-	str := re.ReplaceAll([]byte(s), []byte("github.com/roger-king/test"))
+	str := re.ReplaceAll([]byte(s), []byte(newValue))
 	return string(str)
 }
 

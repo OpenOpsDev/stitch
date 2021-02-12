@@ -30,7 +30,7 @@ func (d Directory) extractFileFromPath() {
 func (d Directory) Mkdir() error {
 	if !d.DoesExist() {
 		d.extractFileFromPath()
-		err := os.Mkdir(path.Join(d.Path), os.ModePerm)
+		err := os.MkdirAll(path.Join(d.Path), os.ModePerm)
 
 		if err != nil {
 			return err

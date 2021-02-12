@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/openopsdev/go-cli-commons/logger"
+	"github.com/openopsdev/stitch/services"
 	"github.com/openopsdev/stitch/templates"
 	"github.com/openopsdev/stitch/utils"
 	"gopkg.in/yaml.v2"
@@ -35,6 +36,14 @@ func NewApplate(source string, answers map[string]string) Applate {
 	var promptConfig PromptConfig
 	var dependencyConfig DependencyConfig
 	applateDir := path.Join(cacheDir, source)
+
+	if err := configExists(applateDir, ".stitch/applate.yaml"); os.IsNotExist(err) {
+		err = services.GitClone(source, applateDir)
+
+		if err != nil {
+			logger.Fatal(fmt.Errorf("failed to pull %s applate: %v", source, err.Error()).Error())
+		}
+	}
 
 	// TODO: handle no prompt config file
 	applatePromptConfigPath := path.Join(applateDir, ".stitch/prompts.yaml")
@@ -129,7 +138,8 @@ func (a Applate) findTemplates() ([]string, error) {
 
 	err := filepath.Walk(a.Source, func(path string, info os.FileInfo, err error) error {
 		isConfig := strings.Contains(path, "applate.yaml")
-		isFileToAdd := !isConfig && !info.IsDir()
+		gitDir := strings.Contains(path, ".git")
+		isFileToAdd := !isConfig && !info.IsDir() && !gitDir
 		if isFileToAdd {
 			files = append(files, path)
 		}
