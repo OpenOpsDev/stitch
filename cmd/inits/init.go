@@ -13,42 +13,34 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package cmd
+package inits
 
 import (
+	"fmt"
+
 	"github.com/openopsdev/go-cli-commons/logger"
 	"github.com/openopsdev/stitch/pkg/configs"
 	"github.com/spf13/cobra"
 )
 
-// initAppCmd represents the initApp command
-var initAppCmd = &cobra.Command{
+// initCmd represents the init command
+var Cmd = &cobra.Command{
 	Use:   "init",
-	Short: "A brief description of your command",
-	Long:  ``,
+	Short: "Interactively create or update a .stitch/config.yaml file",
 	Run: func(cmd *cobra.Command, args []string) {
-		var answers map[string]string
-		var a string
-
-		if len(args) == 0 {
-			logger.Fatal("missing applate")
-		} else if len(args) > 1 {
-			logger.Fatal("too many arguments")
-		}
-
-		a = args[0]
-		appplate := configs.NewApplate(a, answers)
-		applateErrors := appplate.Run()
-
-		if len(applateErrors) > 0 {
-			for _, e := range applateErrors {
-				logger.Error(e.Error())
+		// globalConfig, hasExisting := configs.NewGlobalStitchConfig()
+		config, hasExisting := configs.NewStichConfig()
+		if !hasExisting {
+			config.Docker = &configs.DockerConfig{
+				Compose: &configs.DockerComposeConfig{
+					Version: "3",
+				},
 			}
-			return
+		}
+		err := configs.Render("./.stitch/config.yaml", config)
+
+		if err != nil {
+			logger.Fatal(fmt.Errorf("found an error rendering %v", err).Error())
 		}
 	},
-}
-
-func init() {
-	appCmd.AddCommand(initAppCmd)
 }

@@ -13,19 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package cmd
+package app
 
 import (
 	"github.com/spf13/cobra"
 )
 
 // appCmd represents the app command
-var appCmd = &cobra.Command{
+var Cmd = &cobra.Command{
 	Use:   "app",
-	Short: "create an application from template",
+	Short: "command to perform actions on top of an application",
 	Long:  ``,
-}
-
-func init() {
-	rootCmd.AddCommand(appCmd)
 }
