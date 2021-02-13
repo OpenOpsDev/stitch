@@ -29,7 +29,23 @@ type StitchConfig struct {
 func configExists(dest, filename string) error {
 	configurationPath := path.Join(dest, filename)
 	existingConfigPath := path.Join(configurationPath)
-	if _, err := os.Stat(existingConfigPath); os.IsNotExist(err) {
+	_, err := os.Stat(existingConfigPath)
+
+	if os.IsNotExist(err) {
+		return err
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func directoryExistsAndCreate(dest, filename string) error {
+	err := configExists(dest, filename)
+
+	if os.IsNotExist(err) {
 		err := os.Mkdir(path.Join(dest), os.ModePerm)
 
 		if err != nil {
@@ -51,7 +67,7 @@ func NewStichConfig() (*StitchConfig, bool) {
 
 	// Might want to double check if the config file exists
 	existingConfigPath := path.Join(cwd, ".stitch")
-	if err := configExists(existingConfigPath, "config.yaml"); os.IsNotExist(err) {
+	if err := directoryExistsAndCreate(existingConfigPath, "config.yaml"); os.IsNotExist(err) {
 		if err != nil {
 			logger.Fatal(fmt.Errorf("Failed to get current working directory: %v", err).Error())
 		}

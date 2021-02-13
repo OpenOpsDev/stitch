@@ -36,12 +36,13 @@ func NewApplate(source string, answers map[string]string) Applate {
 	var promptConfig PromptConfig
 	var dependencyConfig DependencyConfig
 	applateDir := path.Join(cacheDir, source)
+	err := configExists(applateDir, ".stitch/applate.yaml")
 
-	if err := configExists(applateDir, ".stitch/applate.yaml"); os.IsNotExist(err) {
+	if os.IsNotExist(err) {
 		err = services.GitClone(source, applateDir)
 
 		if err != nil {
-			logger.Fatal(fmt.Errorf("failed to pull %s applate: %v", source, err.Error()).Error())
+			logger.Fatal(fmt.Errorf("failed to pull %s applate", source).Error())
 		}
 	}
 
