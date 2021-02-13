@@ -12,6 +12,7 @@ Stitch is a utility CLI that streamlines the local development of micro-services
 
 # Commands
 
-| Command              | Description                                |
-| -------------------- | ------------------------------------------ |
-| `stitch compose add` | adds a service to your docker-compose file |
+| Command              | Description                                   |
+| -------------------- | --------------------------------------------- |
+| `stitch compose add` | adds a service to your docker-compose file    |
+| `stitch app init`    | initializes an application template (applate) |
