@@ -1,7 +1,7 @@
 package configs
 
 import (
-	"github.com/openopsdev/stitch/utils"
+	"github.com/openopsdev/stitch/pkg/utils"
 	"gopkg.in/yaml.v2"
 )
 
