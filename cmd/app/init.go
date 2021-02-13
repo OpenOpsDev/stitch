@@ -13,38 +13,42 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package cmd
+package app
 
 import (
-	"fmt"
-
 	"github.com/openopsdev/go-cli-commons/logger"
-	"github.com/openopsdev/stitch/configs"
+	"github.com/openopsdev/stitch/pkg/configs"
 	"github.com/spf13/cobra"
 )
 
-// initCmd represents the init command
-var initCmd = &cobra.Command{
+// initAppCmd represents the initApp command
+var initAppCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Interactively create or update a .stitch/config.yaml file",
+	Short: "streamlines the creation of templates (applates)",
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		// globalConfig, hasExisting := configs.NewGlobalStitchConfig()
-		config, hasExisting := configs.NewStichConfig()
-		if !hasExisting {
-			config.Docker = &configs.DockerConfig{
-				Compose: &configs.DockerComposeConfig{
-					Version: "3",
-				},
-			}
-		}
-		err := configs.Render("./.stitch/config.yaml", config)
+		var answers map[string]string
+		var a string
 
-		if err != nil {
-			logger.Fatal(fmt.Errorf("found an error rendering %v", err).Error())
+		if len(args) == 0 {
+			logger.Fatal("missing applate")
+		} else if len(args) > 1 {
+			logger.Fatal("too many arguments")
+		}
+
+		a = args[0]
+		appplate := configs.NewApplate(a, answers)
+		applateErrors := appplate.Run()
+
+		if len(applateErrors) > 0 {
+			for _, e := range applateErrors {
+				logger.Error(e.Error())
+			}
+			return
 		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(initCmd)
+	Cmd.AddCommand(initAppCmd)
 }

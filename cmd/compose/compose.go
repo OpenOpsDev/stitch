@@ -13,34 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package cmd
+package compose
 
 import (
-	"github.com/openopsdev/go-cli-commons/logger"
-	"github.com/openopsdev/stitch/configs"
 	"github.com/spf13/cobra"
 )
 
-// initAppCmd represents the initApp command
-var initAppCmd = &cobra.Command{
-	Use:   "init",
-	Short: "A brief description of your command",
+// composeCmd represents the compose command
+var Cmd = &cobra.Command{
+	Use:   "compose",
+	Short: "Sets up composition of your applications",
 	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
-		var answers map[string]string
-		a := args[0]
-		appplate := configs.NewApplate(a, answers)
-		applateErrors := appplate.Run()
-
-		if len(applateErrors) > 0 {
-			for _, e := range applateErrors {
-				logger.Error(e.Error())
-			}
-			return
-		}
-	},
-}
-
-func init() {
-	appCmd.AddCommand(initAppCmd)
 }

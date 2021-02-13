@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"github.com/openopsdev/go-cli-commons/logger"
-	"github.com/openopsdev/stitch/services"
-	"github.com/openopsdev/stitch/templates"
-	"github.com/openopsdev/stitch/utils"
+	"github.com/openopsdev/stitch/pkg/services"
+	"github.com/openopsdev/stitch/pkg/templates"
+	"github.com/openopsdev/stitch/pkg/utils"
 	"gopkg.in/yaml.v2"
 )
 

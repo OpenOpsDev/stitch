@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package cmd
+package config
 
 import (
 	"os"
@@ -24,7 +24,7 @@ import (
 )
 
 // configCmd represents the config command
-var configCmd = &cobra.Command{
+var Cmd = &cobra.Command{
 	Use:   "config",
 	Short: "setup the global configuration for stitch",
 	Long:  ``,
@@ -37,8 +37,4 @@ var configCmd = &cobra.Command{
 			logger.Fatal(err.Error())
 		}
 	},
-}
-
-func init() {
-	rootCmd.AddCommand(configCmd)
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/openopsdev/stitch/models"
+	"github.com/openopsdev/stitch/pkg/models"
 )
 
 // DockerHubAPI -

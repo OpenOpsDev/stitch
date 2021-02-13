@@ -21,6 +21,10 @@ import (
 	"path"
 
 	"github.com/openopsdev/go-cli-commons/logger"
+	"github.com/openopsdev/stitch/cmd/app"
+	"github.com/openopsdev/stitch/cmd/compose"
+	configSub "github.com/openopsdev/stitch/cmd/config"
+	"github.com/openopsdev/stitch/cmd/inits"
 	"github.com/spf13/cobra"
 
 	"github.com/spf13/viper"
@@ -29,26 +33,16 @@ import (
 var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
+var stitch = &cobra.Command{
 	Use:   "stitch",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) {
-
-	//  },
+	Short: "A tool to help streamline the development process!",
+	Long:  ``,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	if err := stitch.Execute(); err != nil {
 		logger.Fatal(fmt.Errorf("Failed to start CLI: %v", err).Error())
 	}
 }
@@ -60,11 +54,19 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $ROOT_APP/.stitch.yaml)")
+	stitch.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $ROOT_APP/.stitch.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	stitch.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	setupSubCommands()
+}
+
+func setupSubCommands() {
+	stitch.AddCommand(app.Cmd)
+	stitch.AddCommand(compose.Cmd)
+	stitch.AddCommand(inits.Cmd)
+	stitch.AddCommand(configSub.Cmd)
 }
 
 // initConfig reads in config file and ENV variables if set.

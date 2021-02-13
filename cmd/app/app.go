@@ -13,29 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package cmd
+package app
 
 import (
 	"github.com/spf13/cobra"
 )
 
-// composeCmd represents the compose command
-var composeCmd = &cobra.Command{
-	Use:   "compose",
-	Short: "Sets up composition of your applications",
+// appCmd represents the app command
+var Cmd = &cobra.Command{
+	Use:   "app",
+	Short: "command to perform actions on top of an application",
 	Long:  ``,
-}
-
-func init() {
-	rootCmd.AddCommand(composeCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// composeCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// composeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

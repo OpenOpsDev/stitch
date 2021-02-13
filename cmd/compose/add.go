@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package cmd
+package compose
 
 import (
 	"fmt"
@@ -21,8 +21,9 @@ import (
 
 	"github.com/openopsdev/go-cli-commons/logger"
 	"github.com/openopsdev/go-cli-commons/prompts"
-	"github.com/openopsdev/stitch/configs"
-	"github.com/openopsdev/stitch/services"
+	"github.com/openopsdev/stitch/pkg/configs"
+	"github.com/openopsdev/stitch/pkg/presets"
+	"github.com/openopsdev/stitch/pkg/services"
 	"github.com/spf13/cobra"
 )
 
@@ -62,7 +63,7 @@ var addCmd = &cobra.Command{
 		serviceName := answers["serviceName"]
 
 		// Create New instance of Docker-Compose
-		dc, _ := configs.NewDockerCompose()
+		dc, _ := presets.NewDockerCompose()
 		// Check if service with that name exists
 		// prompt if the user would like to override the configurations set
 		if ok := dc.Services[serviceName]; ok != nil {
@@ -79,7 +80,7 @@ var addCmd = &cobra.Command{
 		}
 
 		// Find Kind of service (May want to offer if remote and has preset do you want to use our prest)
-		service := configs.NewService(imageName, serviceName, Defaults)
+		service := presets.NewService(imageName, serviceName, Defaults)
 		dc.Services[serviceName] = service.Service
 
 		if !isLocal {
@@ -97,15 +98,6 @@ var addCmd = &cobra.Command{
 }
 
 func init() {
-	composeCmd.AddCommand(addCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// addCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
+	Cmd.AddCommand(addCmd)
 	addCmd.Flags().BoolVarP(&Defaults, "yes", "y", false, "add with defaults")
 }
