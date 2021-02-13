@@ -19,7 +19,7 @@ import (
 	"fmt"
 
 	"github.com/openopsdev/go-cli-commons/logger"
-	"github.com/openopsdev/stitch/pkg/configs"
+	"github.com/openopsdev/stitch/configs"
 	"github.com/spf13/cobra"
 )
 

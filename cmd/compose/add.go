@@ -21,9 +21,9 @@ import (
 
 	"github.com/openopsdev/go-cli-commons/logger"
 	"github.com/openopsdev/go-cli-commons/prompts"
-	"github.com/openopsdev/stitch/pkg/configs"
-	"github.com/openopsdev/stitch/pkg/presets"
-	"github.com/openopsdev/stitch/pkg/services"
+	"github.com/openopsdev/stitch/configs"
+	"github.com/openopsdev/stitch/presets"
+	"github.com/openopsdev/stitch/services"
 	"github.com/spf13/cobra"
 )
 
