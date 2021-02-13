@@ -17,7 +17,7 @@ package cmd
 
 import (
 	"github.com/openopsdev/go-cli-commons/logger"
-	"github.com/openopsdev/stitch/configs"
+	"github.com/openopsdev/stitch/pkg/configs"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,15 @@ var initAppCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		var answers map[string]string
-		a := args[0]
+		var a string
+
+		if len(args) == 0 {
+			logger.Fatal("missing applate")
+		} else if len(args) > 1 {
+			logger.Fatal("too many arguments")
+		}
+
+		a = args[0]
 		appplate := configs.NewApplate(a, answers)
 		applateErrors := appplate.Run()
 
