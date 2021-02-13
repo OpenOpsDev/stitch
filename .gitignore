@@ -19,3 +19,7 @@ info.md
 # vendor/
 .stitch
 docker-compose.*
+
+# applate testing
+pkg
+applate

@@ -1,28 +1,9 @@
 package configs
 
 import (
-	"os"
-
+	"github.com/openopsdev/stitch/utils"
 	"gopkg.in/yaml.v2"
 )
-
-func writeToFile(dest, result string) error {
-	file, err := os.Create(dest)
-
-	if err != nil {
-		return err
-	}
-
-	defer file.Close()
-
-	_, err = file.WriteString(result)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
 
 // Render -
 func Render(dest string, s interface{}) error {
@@ -31,8 +12,11 @@ func Render(dest string, s interface{}) error {
 	if err != nil {
 		return err
 	}
-
-	err = writeToFile(dest, string(results))
+	file := utils.File{
+		Data: string(results),
+		Dest: dest,
+	}
+	err = file.Write()
 
 	if err != nil {
 		return err

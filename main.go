@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/roger-king/stitch/cmd"
+import "github.com/openopsdev/stitch/cmd"
 
 func main() {
 	cmd.Execute()

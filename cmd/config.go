@@ -16,35 +16,29 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
+	"os"
+	"path"
 
 	"github.com/openopsdev/go-cli-commons/logger"
-	"github.com/openopsdev/stitch/configs"
 	"github.com/spf13/cobra"
 )
 
-// initCmd represents the init command
-var initCmd = &cobra.Command{
-	Use:   "init",
-	Short: "Interactively create or update a .stitch/config.yaml file",
+// configCmd represents the config command
+var configCmd = &cobra.Command{
+	Use:   "config",
+	Short: "setup the global configuration for stitch",
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		// globalConfig, hasExisting := configs.NewGlobalStitchConfig()
-		config, hasExisting := configs.NewStichConfig()
-		if !hasExisting {
-			config.Docker = &configs.DockerConfig{
-				Compose: &configs.DockerComposeConfig{
-					Version: "3",
-				},
-			}
-		}
-		err := configs.Render("./.stitch/config.yaml", config)
+		home, _ := os.UserHomeDir()
+
+		err := os.MkdirAll(path.Join(home, ".stitch"), os.ModePerm)
 
 		if err != nil {
-			logger.Fatal(fmt.Errorf("found an error rendering %v", err).Error())
+			logger.Fatal(err.Error())
 		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(initCmd)
+	rootCmd.AddCommand(configCmd)
 }

@@ -26,6 +26,20 @@ type StitchConfig struct {
 	Docker *DockerConfig `yaml:"docker"`
 }
 
+func configExists(dest, filename string) error {
+	configurationPath := path.Join(dest, filename)
+	existingConfigPath := path.Join(configurationPath)
+	if _, err := os.Stat(existingConfigPath); os.IsNotExist(err) {
+		err := os.Mkdir(path.Join(dest), os.ModePerm)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // NewStichConfig -
 func NewStichConfig() (*StitchConfig, bool) {
 	var c StitchConfig
@@ -35,10 +49,9 @@ func NewStichConfig() (*StitchConfig, bool) {
 		logger.Fatal(fmt.Errorf("Failed to get current working directory: %v", err).Error())
 	}
 
-	existingConfigPath := path.Join(cwd, ".stitch/config.yaml")
-	if _, err := os.Stat(existingConfigPath); os.IsNotExist(err) {
-		err := os.Mkdir(path.Join(cwd, ".stitch"), os.ModePerm)
-
+	// Might want to double check if the config file exists
+	existingConfigPath := path.Join(cwd, ".stitch")
+	if err := configExists(existingConfigPath, "config.yaml"); os.IsNotExist(err) {
 		if err != nil {
 			logger.Fatal(fmt.Errorf("Failed to get current working directory: %v", err).Error())
 		}
