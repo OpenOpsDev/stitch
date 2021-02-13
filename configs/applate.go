@@ -75,6 +75,11 @@ func NewApplate(source string, answers map[string]string) Applate {
 		logger.Fatal(fmt.Errorf("failed to build applate config: %v", err).Error())
 	}
 
+	if len(dependencyConfig.Version) > 0 {
+		// Adding the global language version to answers
+		promptAnswers["version"] = dependencyConfig.Version
+	}
+
 	dependencyConfig.Vars = promptAnswers
 
 	err = dependencyConfig.Init()
