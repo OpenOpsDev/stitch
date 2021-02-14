@@ -24,6 +24,7 @@ import (
 	"github.com/openopsdev/stitch/pkg/configs"
 	"github.com/openopsdev/stitch/pkg/presets"
 	"github.com/openopsdev/stitch/pkg/services"
+	"github.com/openopsdev/stitch/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -35,12 +36,8 @@ var addCmd = &cobra.Command{
 	Short: "adds a service to your container orchestration config",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 1 {
-			logger.Fatal("Missing image name")
-		}
-
-		if len(args) > 1 {
-			logger.Fatal("Too many arguments provided")
+		if _, err := utils.CheckRequiredNumOfArgs(args, 1); err != nil {
+			logger.Error(err.Error())
 		}
 
 		imageName := args[0]

@@ -18,6 +18,7 @@ package app
 import (
 	"github.com/openopsdev/go-cli-commons/logger"
 	"github.com/openopsdev/stitch/pkg/configs"
+	"github.com/openopsdev/stitch/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -27,17 +28,14 @@ var initAppCmd = &cobra.Command{
 	Short: "streamlines the creation of templates (applates)",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		var answers map[string]string
-		var a string
-
-		if len(args) == 0 {
-			logger.Fatal("missing applate")
-		} else if len(args) > 1 {
-			logger.Fatal("too many arguments")
+		if _, err := utils.CheckRequiredNumOfArgs(args, 1); err != nil {
+			logger.Error(err.Error())
 		}
 
-		a = args[0]
-		appplate := configs.NewApplate(a, answers)
+		var answers map[string]string
+
+		source := args[0]
+		appplate := configs.NewApplate(source, answers)
 		applateErrors := appplate.Run()
 
 		if len(applateErrors) > 0 {
